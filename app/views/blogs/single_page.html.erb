@@ -1,3 +1,74 @@
 
-
 <h1> Hi there!!!!  </h1>
+<ul id="titles"></ul>
+<HR>
+<h3 id="title"></h3>
+<p id="content"></p>
+</HR>
+<input id="i_title" />
+<input id="i_content" />
+<button id="button">New Post</button>
+<HR>
+<input id="num">
+<button id="b2">Set it to Evan</button>
+<hr>
+<input id="num2" placeholder="Id of post to delete">
+<button id="b3">Delete</button>
+
+<script>
+	$(function(){
+		$.get('/blogs.json',function(data){
+			for(var i =0;i<data.length;i++){
+				var a = $("<a>").attr("href",data[i].url).text(data[i].title);
+				$("#titles").append(a);
+			}
+		})
+		$("body").on("click","a",function(event){
+			event.preventDefault();
+			console.log(event.target.href);
+			$.get(event.target.href,function(data){
+				var $title = $("#title")
+				var $content = $("#content")
+
+				$title.text(data.title);
+				$content.text(data.content);
+			})
+		})
+		$("#button").click(function(){
+			var title = $("#i_title").val()
+			var content = $("#i_content").val()
+			$.post('/blogs',{
+				blog:{
+					title:title,
+					content:content
+				}
+			},function(){
+				console.log("it worked");
+			})
+		})
+		$("#b2").click(function(){
+			var num = $("#num").val()
+			$.ajax({
+				type:'PUT',
+				url: '/blogs/'+num+'.json',
+				data: {blog:{title:"Evan"}},
+				success:  function(){
+					console.log("It worked");
+				}
+			})
+		})
+		$("#b3").click(function(){
+			var num = $("#num2").val()
+			num = $("#titles :nth-child("+num+")").attr('href').split("/").slice(-1)[0]
+			$.ajax({
+				type: "DELETE",
+				url: '/blogs/'+num,
+				success: function(){
+					console.log("ELIMINATED!")
+				}
+			})
+
+		})
+
+	})
+</script>

@@ -1,6 +1,6 @@
 class BlogsController < ApplicationController
   before_action :set_blog, only: [:show, :edit, :update, :destroy]
-
+  protect_from_forgery except:'create'
   # GET /blogs
   # GET /blogs.json
   def index
